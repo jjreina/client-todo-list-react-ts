@@ -14,7 +14,7 @@ module.exports = {
   entry: {
     app: './main.tsx',
     appStyles: [
-      './mystyles.css',
+      './css/mystyles.css',
     ],
     verdorStyles: [
       '../node_modules/bootstrap/dist/css/bootstrap.css',
