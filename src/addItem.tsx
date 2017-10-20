@@ -5,8 +5,7 @@ import ItemEntity from './item';
 interface Props {
   newItem : string;
   updateTextImput : (newItem : string) => void;
-  isAddButtonClicked : boolean;
-  updateAddButtonState : (clicked : boolean) => void;
+  addItem : (item : string) => void;
 }
 
 export const AddItemComponet = (props : Props) => {
@@ -21,8 +20,7 @@ export const AddItemComponet = (props : Props) => {
             placeholder="Add new item"
             value={props.newItem}
             className="form-control input-md"
-            onChange={(e) => { props.updateTextImput(e.target.value);
-                              props.updateAddButtonState(false) }
+            onChange={(e) => { props.updateTextImput(e.target.value) }
             }>
           </input>
         </div>
@@ -30,7 +28,7 @@ export const AddItemComponet = (props : Props) => {
           <button
             id="addButton"
             name="addButton" className="btn btn-success"
-            onClick={() => props.updateAddButtonState(true)}>
+            onClick={(e) => props.addItem(props.newItem)}>
             Add item
           </button>
         </div>

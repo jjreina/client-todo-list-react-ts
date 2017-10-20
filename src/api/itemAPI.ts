@@ -7,40 +7,75 @@ class ItemAPI {
   };
 
 
-  // Just return a copy of the mock data
+  // HTTP GET
   getAllItems(): Promise<ItemEntity[]> {
 
     const request = new Request('http://localhost:4000/api/items', {
       method: 'GET',
-      // mode: 'cors',
+      mode: 'cors',
       redirect: 'follow',
       headers: new Headers({
         'Content-Type': 'text/plain'
       })
     })
-
-    return fetch(request)
-      .then( response => response.json())
-      .then( (items) => this.resolveMembers(items))
-      .catch( error => console.log(error) );  
+    
+    let promise = fetch(request);
+    promise.catch( (error) => console.log(error) );
+     return promise
+      .then( (response) => (response.json()) )
+      .then( (items) => (this.resolveMembers(items)) )
   }
 
-  private resolveMembers (data : any) : Promise<ItemEntity[]> {
-
-    const itmes : ItemEntity[] = data.map((item) => {
-      let newItem : ItemEntity = new ItemEntity();
-      newItem.id = item._id;
-      newItem.task = item.task;
-      return newItem;
-    });
-
-    return Promise.resolve(itmes);
+  private resolveMembers(data : any) : ItemEntity[] {
+    let items : ItemEntity[];
+    if (Object.keys(data)[0] === 'error') { 
+      throw data;
+    } else {
+        items = data.map((item) => {
+        let newItem : ItemEntity = new ItemEntity();
+        newItem.id = item.id;
+        newItem.task = item.task;
+        return newItem;
+      });
+    }
+    return items;
   }
 
+  // HTTP POST
+  addItem(item: ItemEntity): Promise<ItemEntity> {
+    const request = new Request('http://localhost:4000/api/items', {
+      method: 'POST',
+      mode: 'cors',
+      redirect: 'follow',
+      headers: new Headers({
+        'Content-Type': 'application/json'
+      }),
+      body: JSON.stringify({
+        task: item.task,
+        id: item.id
+      })
+    })
+    
+    let promise = fetch(request);
+    return promise
+      .then( response => response.json() )
+      .then( (item) => this.resolveMember(item) )
+      .catch( (error) => {
+        console.log(error);
+        throw error;
+      });
+  }
 
-  addItem(item: ItemEntity): Array<ItemEntity> {
-    // ItemsMockData.push(item);
-    return null; //this._clone(ItemsMockData);
+  private resolveMember (data : any) : ItemEntity {
+    let newItem : ItemEntity;
+    if (Object.keys(data)[0] === 'error') { 
+      throw data.error;
+    } else {
+      newItem = new ItemEntity();
+      newItem.id = data.id;
+      newItem.task = data.task;
+    }
+    return newItem;
   }
 }
 
